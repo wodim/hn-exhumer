@@ -1,4 +1,5 @@
 import configparser
+from html import unescape
 import json
 import logging
 from time import time
@@ -30,7 +31,7 @@ class HN:
 
     @staticmethod
     def clean_text(text):
-        return text.replace('<p>', '\n')
+        return unescape(text).replace('<p>', '\n')
 
     def _get_story_memory(self, story_id):
         # logger.info('retrieving from memory: %s', story_id)
