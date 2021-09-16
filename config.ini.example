@@ -1,0 +1,4 @@
+[bot]
+token = 123123123:zzzzzzzzzzzzz
+cron_chat_id = -100123123123
+cron_chat_name = @my_updates
