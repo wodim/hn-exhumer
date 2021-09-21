@@ -32,7 +32,7 @@ def _story_meta(story):
         yield '%s point%s' % (story['score'], 's' if story['score'] != 1 else '')
     if 'descendants' in story:
         yield '%s comment%s' % (story['descendants'], 's' if story['descendants'] != 1 else '')
-    elif 'kids' in story:
+    elif 'kids' in story and len(story['kids']) > 0:
         yield '%s comment%s' % (len(story['kids']), 's' if len(story['kids']) != 1 else '')
 
 
