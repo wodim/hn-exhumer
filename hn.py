@@ -95,6 +95,12 @@ class HN:
                 self._put_story_memory(key, 'old')
                 continue
 
+            if story.get('deleted'):
+                # forget deleted stories
+                logger.info('%s: deleted', key)
+                self._put_story_memory(key, 'old')
+                continue
+
             # find out why this story vanished
             if story.get('dead'):
                 # got killed
