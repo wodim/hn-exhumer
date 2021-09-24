@@ -84,8 +84,8 @@ def main() -> None:
     # reply to anything that is said to me in private
     dispatcher.add_handler(MessageHandler(None, command_help))
 
-    # add a "cron" job that posts automatically every even hour
-    dispatcher.job_queue.run_repeating(cron, interval=10)
+    # add a "cron" job that runs every five seconds
+    dispatcher.job_queue.run_repeating(cron, interval=5)
 
     # Start the Bot
     updater.start_polling()
