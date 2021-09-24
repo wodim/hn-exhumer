@@ -28,8 +28,8 @@ def _e(text: str) -> str:
 
 
 def _story_meta(story):
-    if 'score' in story:
-        yield '%s point%s' % (story['score'], 's' if story['score'] != 1 else '')
+    if 'score' in story and story['score'] != 1:
+        yield '%s points' % story['score']
     if 'descendants' in story:
         yield '%s comment%s' % (story['descendants'], 's' if story['descendants'] != 1 else '')
     elif 'kids' in story and len(story['kids']) > 0:
@@ -52,7 +52,7 @@ def post_thread(chat_id: int, context: CallbackContext) -> None:
         if 'url' in story:
             text += '\n' + _e(story['url'])
 
-        if (meta := _story_meta(story)):
+        if (meta := list(_story_meta(story))):
             text += '\n' + _e(' - '.join(meta))
 
         if 'text' in story:
