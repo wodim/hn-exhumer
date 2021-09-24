@@ -31,7 +31,7 @@ class HN:
 
     @staticmethod
     def clean_text(text):
-        return unescape(text).replace('<p>', '\n')
+        return unescape(text).replace('<p>', '\n\n')
 
     def _get_story_memory(self, story_id):
         # logger.info('retrieving from memory: %s', story_id)
