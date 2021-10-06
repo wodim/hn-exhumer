@@ -27,6 +27,10 @@ def _e(text: str) -> str:
     return telegram.utils.helpers.escape_markdown(text, 2)
 
 
+def ellipsis(text: str, max_: int) -> str:
+    return text[:max_ - 1] + '…' if len(text) > max_ else text
+
+
 def _story_meta(story):
     if 'score' in story and story['score'] != 1:
         yield '%s points' % story['score']
@@ -56,7 +60,7 @@ def post_thread(chat_id: int, context: CallbackContext) -> None:
             text += '\n' + _e(' - '.join(meta))
 
         if 'text' in story:
-            text += '\n\n' + _e(HN.clean_text(story['text']))
+            text += '\n\n' + _e(ellipsis(HN.clean_text(story['text']).strip(), 3000))
 
         text += '\n\n' + _e(ITEM_PERMALINK % story['id'])
 
