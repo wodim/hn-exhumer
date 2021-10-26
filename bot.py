@@ -48,6 +48,8 @@ def post_thread(chat_id: int, context: CallbackContext) -> None:
             header = 'FLAGGED'
         elif state == 'resurrected':
             header = 'UNFLAGGED'
+        elif state == 'downranked':
+            header = 'DOWNRANKED'
         else:
             raise ValueError('unknown new state:', state)
 
@@ -88,8 +90,8 @@ def main() -> None:
     # reply to anything that is said to me in private
     dispatcher.add_handler(MessageHandler(None, command_help))
 
-    # add a "cron" job that runs every five seconds
-    dispatcher.job_queue.run_repeating(cron, interval=5)
+    # add a "cron" job
+    dispatcher.job_queue.run_repeating(cron, interval=10)
 
     # Start the Bot
     updater.start_polling()
