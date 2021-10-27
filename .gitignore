@@ -1,3 +1,4 @@
 /config.ini
-/memory.ini
+/memory.sqlite
+/memory.sqlite-journal
 /__pycache__

@@ -13,8 +13,6 @@ logger = logging.getLogger(__name__)
 
 ITEM_PERMALINK = 'https://news.ycombinator.com/item?id=%s'
 
-hn = HN()
-
 
 def _config(k: str) -> str:
     config = configparser.ConfigParser()
@@ -40,20 +38,11 @@ def _story_meta(story):
         yield '%s comment%s' % (len(story['kids']), 's' if len(story['kids']) != 1 else '')
 
 
-def post_thread(chat_id: int, context: CallbackContext) -> None:
-    context.bot.send_chat_action(chat_id=chat_id, action=telegram.ChatAction.TYPING)
+def cron(context: CallbackContext) -> None:
+    hn = HN()
 
     for story, state in hn.get_updates():
-        if state == 'killed':
-            header = 'FLAGGED'
-        elif state == 'resurrected':
-            header = 'UNFLAGGED'
-        elif state == 'downranked':
-            header = 'DOWNRANKED'
-        else:
-            raise ValueError('unknown new state:', state)
-
-        text = '*%s: %s*' % (header, _e(story['title']))
+        text = '*%s: %s*' % (state.upper(), _e(story['title']))
 
         if 'url' in story:
             text += '\n' + _e(story['url'])
@@ -66,16 +55,12 @@ def post_thread(chat_id: int, context: CallbackContext) -> None:
 
         text += '\n\n' + _e(ITEM_PERMALINK % story['id'])
 
-        context.bot.send_message(chat_id, text,
+        context.bot.send_message(int(_config('cron_chat_id')), text,
                                  parse_mode=telegram.constants.PARSEMODE_MARKDOWN_V2,
                                  disable_web_page_preview=True)
 
 
-def cron(context: CallbackContext) -> None:
-    post_thread(int(_config('cron_chat_id')), context)
-
-
-def command_help(update: Update, context: CallbackContext) -> None:
+def command_help(update: Update, _: CallbackContext) -> None:
     update.message.reply_text('Join %s' % _config('cron_chat_name'))
 
 
