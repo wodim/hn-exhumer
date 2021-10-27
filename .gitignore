@@ -1,4 +1,3 @@
 /config.ini
-/memory.sqlite
-/memory.sqlite-journal
+/memory.pickle
 /__pycache__

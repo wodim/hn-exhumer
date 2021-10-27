@@ -4,7 +4,7 @@ import logging
 
 import requests
 
-from sqlite3_memory import Sqlite3Memory
+from memory import Memory
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
@@ -19,7 +19,7 @@ class HN:
 
     def __init__(self):
         self.session = requests.Session()
-        self.memory = Sqlite3Memory()
+        self.memory = Memory()
 
     def request(self, url):
         logger.info('requesting url: %s', url)
