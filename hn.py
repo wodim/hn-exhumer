@@ -4,7 +4,7 @@ import logging
 
 import requests
 
-from sqlite3_memory import RedisMemory
+from redis_memory import RedisMemory
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
