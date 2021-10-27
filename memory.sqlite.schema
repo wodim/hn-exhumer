@@ -1,0 +1,5 @@
+CREATE TABLE memory (id integer not null, key text not null, value text not null, time text not null);
+CREATE INDEX memory_id on memory (id);
+CREATE INDEX memory_id_key_time on memory (id, key, time);
+CREATE INDEX memory_time on memory (time);
+CREATE INDEX memory_id_key on memory (id, key);
