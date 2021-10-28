@@ -34,11 +34,11 @@ class HN:
         rank_history = self.memory.rank_history(story_id)
         if len(rank_history) < 2:
             return 0
-        if (rank_history[-2] < self.PAGE_SIZE and
+        if (rank_history[-2] <= self.PAGE_SIZE and
                 rank_history[-1] > self.PAGE_SIZE * 2):
             self.memory.put_value(story_id, 'downranked', 1)
             return -1
-        if (rank_history[-1] < self.PAGE_SIZE and
+        if (rank_history[-1] <= self.PAGE_SIZE and
                 self.memory.get_value(story_id, 'downranked') == 1):
             self.memory.put_value(story_id, 'downranked', 0)
             return 1
