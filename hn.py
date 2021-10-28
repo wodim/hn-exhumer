@@ -50,7 +50,7 @@ class HN:
 
         for story_id in self.memory.get_all_ids():
             state = self.memory.get_value(story_id, 'state')
-            rank = self.memory.get_value(story_id, 'rank')
+            rank = self.memory.get_last_value(story_id, 'rank')
             # state, rank = self.memory.get_values(story_id, 'state', 'rank')
             rank = int(rank) if rank else 0
 
@@ -110,7 +110,7 @@ class HN:
 
         for story_id in top_story_ids:
             # save the ranks for stories that are not in memory
-            self.memory.put_value(story_id, 'rank', top_story_ids.index(story_id) + 1)
+            self.memory.put_set_value(story_id, 'rank', top_story_ids.index(story_id) + 1)
             if rank_change := self._get_rank_change(story_id):
                 story = self.request(self.ITEM_URL % story_id)
                 if rank_change == 1:

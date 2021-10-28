@@ -14,6 +14,9 @@ logger = logging.getLogger(__name__)
 ITEM_PERMALINK = 'https://news.ycombinator.com/item?id=%s'
 
 
+hn = HN()
+
+
 def _config(k: str) -> str:
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -39,8 +42,6 @@ def _story_meta(story):
 
 
 def cron(context: CallbackContext) -> None:
-    hn = HN()
-
     for story, state in hn.get_updates():
         text = '*%s: %s*' % (state.upper(), _e(story['title']))
 
