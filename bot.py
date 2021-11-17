@@ -11,8 +11,6 @@ from hn import HN
 logging.basicConfig(format='%(asctime)s - %(name)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-ITEM_PERMALINK = 'https://news.ycombinator.com/item?id=%s'
-
 
 hn = HN()
 
@@ -54,7 +52,7 @@ def cron(context: CallbackContext) -> None:
         if 'text' in story:
             text += '\n\n' + _e(ellipsis(HN.clean_text(story['text']).strip(), 3000))
 
-        text += '\n\n' + _e(ITEM_PERMALINK % story['id'])
+        text += '\n\n' + _e(HN.get_permalink(story['id']))
 
         context.bot.send_message(int(_config('cron_chat_id')), text,
                                  parse_mode=telegram.constants.PARSEMODE_MARKDOWN_V2,
@@ -77,7 +75,7 @@ def main() -> None:
     dispatcher.add_handler(MessageHandler(None, command_help))
 
     # add a "cron" job
-    dispatcher.job_queue.run_repeating(cron, interval=10)
+    dispatcher.job_queue.run_repeating(cron, interval=3)
 
     # Start the Bot
     updater.start_polling()
