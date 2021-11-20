@@ -1,5 +1,6 @@
 import configparser
 import logging
+import time
 
 import telegram
 from telegram import Update
@@ -41,6 +42,9 @@ def _story_meta(story):
 
 def cron(context: CallbackContext) -> None:
     for story, state in hn.get_updates():
+        if 'title' not in story:
+            story['title'] = '<no title>'
+
         text = '*%s: %s*' % (state.upper(), _e(story['title']))
 
         if 'url' in story:
@@ -54,9 +58,16 @@ def cron(context: CallbackContext) -> None:
 
         text += '\n\n' + _e(HN.get_permalink(story['id']))
 
-        context.bot.send_message(int(_config('cron_chat_id')), text,
-                                 parse_mode=telegram.constants.PARSEMODE_MARKDOWN_V2,
-                                 disable_web_page_preview=True)
+        while True:
+            try:
+                context.bot.send_message(int(_config('cron_chat_id')), text,
+                                         parse_mode=telegram.constants.PARSEMODE_MARKDOWN_V2,
+                                         disable_web_page_preview=True)
+                break
+            except telegram.error.RetryAfter as exc:
+                timeout = exc.retry_after + 1
+                logger.info('Rate limit hit. Waiting %d seconds...', timeout)
+                time.sleep(timeout)
 
 
 def command_help(update: Update, _: CallbackContext) -> None:
