@@ -26,7 +26,7 @@ class HN:
 
     def request(self, url):
         logger.info('requesting url: %s', url)
-        data = self.session.get(url).text
+        data = self.session.get(url, timeout=3).text
         return json.loads(data)
 
     @staticmethod
