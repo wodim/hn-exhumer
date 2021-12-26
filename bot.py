@@ -32,6 +32,8 @@ def ellipsis(text: str, max_: int) -> str:
 
 
 def _story_meta(story):
+    if 'by' in story:
+        yield 'by %s' % story['by']
     if 'score' in story and story['score'] != 1:
         yield '%s points' % story['score']
     if story.get('descendants'):
