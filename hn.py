@@ -82,6 +82,9 @@ class HN:
         if force or not data:
             # we update instead of replacing so we can keep meta from
             # deleted stories
+            for key in self.NON_CACHEABLE_META:
+                if key in data:
+                    del data[key]
             if live_data := self.request(self.ITEM_URL % story_id):
                 data.update(live_data)
                 self.memory.put_value(story_id, 'data', data)
