@@ -1,4 +1,5 @@
 import configparser
+import html
 import logging
 import time
 
@@ -16,6 +17,9 @@ logger = logging.getLogger(__name__)
 hn = HN()
 
 
+PROFILE_URL = 'https://news.ycombinator.com/user?id=%s'
+
+
 def _config(k: str) -> str:
     config = configparser.ConfigParser()
     config.read('config.ini')
@@ -23,8 +27,8 @@ def _config(k: str) -> str:
 
 
 def _e(text: str) -> str:
-    """escapes text with markdown v2 syntax"""
-    return telegram.utils.helpers.escape_markdown(text, 2)
+    """escapes html special characters in text"""
+    return html.escape(text)
 
 
 def ellipsis(text: str, max_: int) -> str:
@@ -33,7 +37,7 @@ def ellipsis(text: str, max_: int) -> str:
 
 def _story_meta(story):
     if 'by' in story:
-        yield 'by %s' % story['by']
+        yield 'by <a href="%s">%s</a>' % (PROFILE_URL % story['by'], story['by'])
     if 'score' in story and story['score'] != 1:
         yield '%s points' % story['score']
     if story.get('descendants'):
@@ -47,23 +51,23 @@ def cron(context: CallbackContext) -> None:
         if 'title' not in story:
             story['title'] = '<no title>'
 
-        text = '*%s: %s*' % (state.upper(), _e(story['title']))
+        text = '<b>%s: %s</b>' % (state.upper(), _e(story['title']))
 
         if 'url' in story:
             text += '\n' + _e(story['url'])
 
         if (meta := list(_story_meta(story))):
-            text += '\n' + _e(' - '.join(meta))
+            text += '\n' + ' - '.join(meta)
 
         if 'text' in story:
-            text += '\n\n' + _e(ellipsis(HN.clean_text(story['text']).strip(), 3000))
+            text += '\n\n' + ellipsis(_e(HN.clean_text(story['text']).strip()), 3000)
 
-        text += '\n\n' + _e(HN.get_permalink(story['id']))
+        text += '\n\n' + HN.get_permalink(story['id'])
 
         while True:
             try:
                 context.bot.send_message(int(_config('cron_chat_id')), text,
-                                         parse_mode=telegram.constants.PARSEMODE_MARKDOWN_V2,
+                                         parse_mode=telegram.constants.PARSEMODE_HTML,
                                          disable_web_page_preview=True)
                 break
             except telegram.error.RetryAfter as exc:
